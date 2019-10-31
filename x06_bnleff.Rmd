@@ -17,6 +17,22 @@ include("tidyverse")
 ```
 
 ```{r}
+myurl <- "http://ems.csuchico.edu/APSS/schedule/spr2020/MATH.shtml"
+testmath20 <- read_html(myurl)
+bran <- testmath20 %>% html_node(css = "table")
+don <- bran %>%  html_table(header = TRUE) %>% 
+  mutate(nc = nchar(Sect)) %>%
+  filter(nc==2)
+beforetable <-  don %>% tibble(subject = don$Subj,
+                               catnum = don$'Cat Num',
+                               section = don$Sect,
+                               title = don$Title,
+                               instructor = don$Instructor,
+                               tot_enrl = don$'Tot Enrl')
+finaltable <- beforetable %>% select(subject,catnum,section,title,instructor,tot_enrl)
+```
+
+```{r}
 read_class_schedule <- function(url){
   midfun <- read_html(url)
   midtbl <- html_node(midfun, css="table")
